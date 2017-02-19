@@ -56,7 +56,7 @@ class LearningAgent(Agent):
         ## TO DO ##
         ###########
         # Set 'state' as a tuple of relevant data for the agent        
-        state = None
+        state = (waypoint,inputs)
 
         return state
 
@@ -93,9 +93,10 @@ class LearningAgent(Agent):
             which action to take, based on the 'state' the smartcab is in. """
 
         # Set the agent state and default action
-        self.state = state
+        self.state         = state
         self.next_waypoint = self.planner.next_waypoint()
-        action = None
+        valid_actions_     = [None, 'forward', 'left', 'right']
+        action             = random.choice(valid_actions_)
 
         ########### 
         ## TO DO ##
