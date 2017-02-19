@@ -23,6 +23,8 @@ class LearningAgent(Agent):
         ## TO DO ##
         ###########
         # Set any additional class parameters as needed
+        self.s_table = dict()     # This variable was created by me as an auxiliary
+                                  # dictionary to store the states tuples
 
 
     def reset(self, destination=None, testing=False):
@@ -85,6 +87,19 @@ class LearningAgent(Agent):
         # If it is not, create a new dictionary for that state
         #   Then, for each action available, set the initial Q-value to 0.0
 
+        if state in self.s_table.values(): #Check if state is new
+            pass
+        else:
+            i = len(self.s_table.values())+1 # Auxiliary variable to add state name
+            s_aux = 'state'+str(i)           # Generating state'i'
+            self.s_table[s_aux]=state        # Update s_table
+            q_aux = {s_aux:                  # Auxiliary Q-table
+             {'action-1':0,
+              'action-2':0,
+              'action-3':0,
+              'action-4':0}}
+            self.Q.update(q_aux)             # Update Q-table
+
         return
 
 
@@ -132,6 +147,7 @@ class LearningAgent(Agent):
         action = self.choose_action(state)  # Choose an action
         reward = self.env.act(self, action) # Receive a reward
         self.learn(state, action, reward)   # Q-learn
+        print self.Q
 
         return
         
