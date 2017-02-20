@@ -23,8 +23,6 @@ class LearningAgent(Agent):
         ## TO DO ##
         ###########
         # Set any additional class parameters as needed
-        self.s_table = dict()     # This variable was created by me as an auxiliary
-                                  # dictionary to store the states tuples
 
 
     def reset(self, destination=None, testing=False):
@@ -79,7 +77,7 @@ class LearningAgent(Agent):
         # max(self.Q[state],key=self.Q[state].get) - Gives the action with highest Q-value -- Davi
 
 
-        maxQ = max(self.Q[state].values()) # Setting max Q-value given actions -- Davi
+        maxQ = max(self.Q[str(state)].values()) # Setting max Q-value given actions -- Davi
 
         return maxQ 
 
@@ -94,13 +92,14 @@ class LearningAgent(Agent):
         # If it is not, create a new dictionary for that state
         #   Then, for each action available, set the initial Q-value to 0.0
 
-        if state in self.s_table.values(): #Check if state is new
+        state = str(state)
+
+        if state in self.Q.keys(): #Check if state is new
             pass
         else:
-            i = len(self.s_table.values())+1 # Auxiliary variable to add state name -- Davi
+            i = len(self.Q.keys())+1 # Auxiliary variable to add state name -- Davi
             s_aux = 'state'+str(i)           # Generating state'i'                  -- Davi
-            self.s_table[s_aux]=state        # Update s_table                       -- Davi
-            q_aux = {s_aux:                  # Auxiliary Q-table                    -- Davi
+            q_aux = {state:                  # Auxiliary Q-table                    -- Davi
              { None     : 0,
               'forward' : 0,
               'left'    : 0,
@@ -125,6 +124,7 @@ class LearningAgent(Agent):
         # When not learning, choose a random action
         # When learning, choose a random action with 'epsilon' probability
         #   Otherwise, choose an action with the highest Q-value for the current state
+        state = str(state)                         # Transforming in string to use as dictionary key  -- Davi
 	if random.random() < self.epsilon:         # Probability of chosing a random action           -- Davi
             action = random.choice(valid_actions_) # Random action                                    -- Davi
         else:
@@ -142,8 +142,9 @@ class LearningAgent(Agent):
         ###########
         # When learning, implement the value iteration update rule
         #   Use only the learning rate 'alpha' (do not use the discount factor 'gamma')
+        state = str(state)
 
-        self.Q[state][action] = self.Q[state]*(1.0-self.alpha) + reward*self.alpha # Update Q-table -- Davi
+        self.Q[state][action] = self.Q[state][action]*(1.0-self.alpha) + reward*self.alpha # Update Q-table -- Davi
 
         return
 
