@@ -76,8 +76,10 @@ class LearningAgent(Agent):
         ## TO DO ##
         ###########
         # Calculate the maximum Q-value of all actions for a given state
+        # max(self.Q[state],key=self.Q[state].get) - Gives the action with highest Q-value -- Davi
 
-        maxQ = None
+
+        maxQ = max(self.Q[state].values()) # Setting max Q-value given actions -- Davi
 
         return maxQ 
 
@@ -95,14 +97,14 @@ class LearningAgent(Agent):
         if state in self.s_table.values(): #Check if state is new
             pass
         else:
-            i = len(self.s_table.values())+1 # Auxiliary variable to add state name
-            s_aux = 'state'+str(i)           # Generating state'i'
-            self.s_table[s_aux]=state        # Update s_table
-            q_aux = {s_aux:                  # Auxiliary Q-table
-             {'action-1':0,
-              'action-2':0,
-              'action-3':0,
-              'action-4':0}}
+            i = len(self.s_table.values())+1 # Auxiliary variable to add state name -- Davi
+            s_aux = 'state'+str(i)           # Generating state'i'                  -- Davi
+            self.s_table[s_aux]=state        # Update s_table                       -- Davi
+            q_aux = {s_aux:                  # Auxiliary Q-table                    -- Davi
+             { None     : 0,
+              'forward' : 0,
+              'left'    : 0,
+              'right'   : 0}}
             self.Q.update(q_aux)             # Update Q-table
 
         return
@@ -116,7 +118,6 @@ class LearningAgent(Agent):
         self.state         = state
         self.next_waypoint = self.planner.next_waypoint()
         valid_actions_     = [None, 'forward', 'left', 'right']
-        action             = random.choice(valid_actions_)
 
         ########### 
         ## TO DO ##
@@ -124,7 +125,10 @@ class LearningAgent(Agent):
         # When not learning, choose a random action
         # When learning, choose a random action with 'epsilon' probability
         #   Otherwise, choose an action with the highest Q-value for the current state
- 
+	if random.random() < self.epsilon:         # Probability of chosing a random action           -- Davi
+            action = random.choice(valid_actions_) # Random action                                    -- Davi
+        else:
+            action = max(self.Q[state],key=self.Q[state].get) # Gives the action with highest Q-value -- Davi
         return action
 
 
@@ -139,6 +143,8 @@ class LearningAgent(Agent):
         # When learning, implement the value iteration update rule
         #   Use only the learning rate 'alpha' (do not use the discount factor 'gamma')
 
+        self.Q[state][action] = self.Q[state]*(1.0-self.alpha) + reward*self.alpha # Update Q-table -- Davi
+
         return
 
 
@@ -152,7 +158,6 @@ class LearningAgent(Agent):
         action = self.choose_action(state)  # Choose an action
         reward = self.env.act(self, action) # Receive a reward
         self.learn(state, action, reward)   # Q-learn
-        print self.Q
 
         return
         
