@@ -23,6 +23,7 @@ class LearningAgent(Agent):
         ## TO DO ##
         ###########
         # Set any additional class parameters as needed
+        self.trials = 0          # Number of trials, used in the epsilon decay  --  Davi
 
 
     def reset(self, destination=None, testing=False):
@@ -39,11 +40,15 @@ class LearningAgent(Agent):
         # Update epsilon using a decay function of your choice
         # Update additional class parameters as needed
         # If 'testing' is True, set epsilon and alpha to 0
+
+        self.trials += 1.0
+
         if testing:
             self.epsilon= 0.0
             self.alpha  = 0.0
         else:
-            self.epsilon+= -0.05
+            # self.epsilon+= -0.05 # Simple decay function -- Davi
+            self.epsilon = 0.995**(self.trials) 
 
         return None
 
