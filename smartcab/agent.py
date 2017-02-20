@@ -133,7 +133,8 @@ class LearningAgent(Agent):
 	if random.random() < self.epsilon:         # Probability of chosing a random action           -- Davi
             action = random.choice(valid_actions_) # Random action                                    -- Davi
         else:
-            action = max(self.Q[state],key=self.Q[state].get) # Gives the action with highest Q-value -- Davi
+            action = [i for i, v in q.iteritems() if v == max(q.values())]  #Get keys with maximum value -- Davi
+            action = action[random.randrange(0,len(action))] # Choose randomly if more than one max value. If only one, then always choose it -- Davi
         return action
 
 
