@@ -3,6 +3,7 @@ import math
 from environment import Agent, Environment
 from planner import RoutePlanner
 from simulator import Simulator
+from numpy import cos
 
 class LearningAgent(Agent):
     """ An agent that learns to drive in the Smartcab world.
@@ -48,7 +49,8 @@ class LearningAgent(Agent):
             self.alpha  = 0.0
         else:
             # self.epsilon+= -0.05 # Simple decay function -- Davi
-            self.epsilon = 0.995**(self.trials) 
+            # self.epsilon = 0.995**(self.trials) 
+            self.epsilon = cos(0.01*self.trials) 
 
         return None
 
@@ -66,7 +68,7 @@ class LearningAgent(Agent):
         ## TO DO ##
         ###########
         # Set 'state' as a tuple of relevant data for the agent        
-        state = (waypoint,inputs)
+        state = (waypoint,inputs['oncoming'],inputs['left'],inputs['light'])
 
         return state
 
@@ -130,10 +132,11 @@ class LearningAgent(Agent):
         # When learning, choose a random action with 'epsilon' probability
         #   Otherwise, choose an action with the highest Q-value for the current state
         state = str(state)                         # Transforming in string to use as dictionary key  -- Davi
-	if random.random() < self.epsilon:         # Probability of chosing a random action           -- Davi
+	if random.random() < self.epsilon or self.learning==False:         # Probability of chosing a random action           -- Davi
             action = random.choice(valid_actions_) # Random action                                    -- Davi
         else:
-            action = [i for i, v in q.iteritems() if v == max(q.values())]  #Get keys with maximum value -- Davi
+            # action = max(self.Q[state],key=self.Q[state].get) # Gives the action with highest Q-value -- Davi
+            action = [i for i, v in self.Q[state].iteritems() if v == max(self.Q[state].values())]  #Get keys with maximum value -- Davi
             action = action[random.randrange(0,len(action))] # Choose randomly if more than one max value. If only one, then always choose it -- Davi
         return action
 
